@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resources</title>
+    <title>Guidance and Counseling Resources</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -66,7 +66,7 @@
 </head>
 <body>
     <header class="header">
-        <h1>ChildSafe Resources</h1>
+        <h1>Guidance and Counseling Resources</h1>
         <nav class="nav">
             <a href="#">Home</a>
             <a href="#">About</a>
