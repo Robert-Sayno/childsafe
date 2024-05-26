@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +14,7 @@
         }
 
         .container {
-            max-width: 400px;
+            max-width: 800px;
             margin: 0 auto;
             background-color: #fff;
             padding: 20px;
@@ -51,43 +52,98 @@
         button:hover {
             background-color: #0056b3;
         }
-        
-        .step {
-            display: none;
+
+        .header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
         }
-        
-        .active {
-            display: block;
+
+        .nav {
+            background-color: #007bff;
+            padding: 10px;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .nav a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
+
 <body>
+    <div class="header">
+        <h1>Login Form</h1>
+    </div>
+    <div class="nav">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+    </div>
+
     <div class="container">
-        <h2>Login Form</h2>
-        <form id="loginForm" action="verify_otp.php" method="post">
-            <div class="form-group step active" id="step1">
+        <?php
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            // Database connection
+            include_once('auth/connection.php');
+            // Retrieve phone number from form
+            $phone = $_POST["phone"];
+
+            // Check if the phone number contains only digits
+            if (!is_numeric($phone)) {
+                echo "<script>alert('Please enter a valid phone number.'); window.location.href = 'login.php';</script>";
+                exit();
+            }
+
+            // SQL query to check if the phone number exists in the database
+            $sql = "SELECT * FROM users WHERE phone = '$phone'";
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+                // Phone number exists, grant access to index page
+                $_SESSION['phone'] = $phone; // Set session variable
+                header("Location: index.php");
+                exit();
+            } else {
+                // Phone number doesn't exist, show error message
+                echo "<script>alert('Phone number not found. Please try again.'); window.location.href = 'login.php';</script>";
+                exit();
+            }
+            
+            echo "<script>alert('Login successful. Redirecting to index page.'); setTimeout(function() { window.location.href = 'index.php'; }, 1000);</script>";
+
+            $conn->close();
+        }
+        ?>
+
+        <form id="loginForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+            <div class="form-group">
                 <label for="phone">Phone Number:</label>
-                <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required>
-                <button type="button" onclick="nextStep()">Next</button>
+                <input type="text" id="phone" name="phone" placeholder="Enter your phone number starting with 07.." required>
+                <!-- Hint text -->
             </div>
-            <div class="form-group step" id="step2">
-                <label for="otp">OTP:</label>
-                <input type="text" id="otp" name="otp" placeholder="Enter OTP" required>
-                <button type="submit">Submit</button>
-            </div>
+            <button type="submit">Login</button>
         </form>
     </div>
 
     <script>
-        let currentStep = 1;
-        const form = document.getElementById('loginForm');
-        const steps = form.getElementsByClassName('step');
-
-        function nextStep() {
-            steps[currentStep - 1].classList.remove('active');
-            currentStep++;
-            steps[currentStep - 1].classList.add('active');
-        }
+        // JavaScript for displaying success alert after successful login
+        <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $result->num_rows > 0): ?>
+        alert("Login successful. Redirecting to index page.");
+        <?php endif; ?>
     </script>
 </body>
+
 </html>

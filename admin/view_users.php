@@ -141,12 +141,12 @@
 
     <div class="dashboard-container">
         <div class="dashboard-header">
-            <h2>Welcome to the Admin Dashboard - Employees</h2>
+            <h2>Welcome to the Admin Dashboard - SYSTEM  USERS</h2>
         </div>
 
         <!-- Navigation Links -->
         <div class="nav-container">
-            <a class="nav-link" href="employee_dashboard.php">Home Dashboard</a>
+            <a class="nav-link" href="dashboard.php">Home Dashboard</a>
             <!-- Add more navigation links as needed -->
         </div>
 
@@ -162,12 +162,12 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>User ID</th>
-                        <th>Name</th>
-                        <th>Gender</th>
-                        <th>Position</th>
-                        <th>Date of Birth</th>
-                        <th>Salary</th>
+                        
+                        <th>phone</th>
+                       
+                        <th>age</th>
+                        <th>District</th>
+                        <th>Reporters category</th>
                         <th>Actions</th> <!-- New column for actions -->
                     </tr>
                 </thead>
@@ -175,16 +175,16 @@
                     <?php foreach ($employees as $employee) : ?>
                         <tr>
                             <td><?php echo $employee['id']; ?></td>
-                            <td><?php echo $employee['user_id']; ?></td>
-                            <td><?php echo $employee['fullname']; ?></td>
-                            <td><?php echo $employee['gender']; ?></td>
-                            <td><?php echo $employee['position']; ?></td>
-                            <td><?php echo $employee['dob']; ?></td>
-                            <td><?php echo $employee['salary']; ?></td>
+                         
+                            <td><?php echo $employee['phone']; ?></td>
+                           
+                            <td><?php echo $employee['age']; ?></td>
+                            <td><?php echo $employee['district']; ?></td>
+                            <td><?php echo $employee['category']; ?></td>
                             <td>
-                                <a href="edit_employee.php?id=<?php echo $employee['id']; ?>">Edit</a>
-                                <a href="delete_employee.php?id=<?php echo $employee['id']; ?>">Delete</a>
-                                <a href="manage_employee.php?id=<?php echo $employee['id']; ?>">Manage</a>
+                                <a href="edit_user.php?id=<?php echo $employee['id']; ?>">Edit</a>
+                                <a href="delete_user.php?id=<?php echo $employee['id']; ?>">Delete</a>
+                                <a href="manage_user.php?id=<?php echo $employee['id']; ?>">Manage</a>
                             </td> <!-- Action buttons -->
                         </tr>
                     <?php endforeach; ?>

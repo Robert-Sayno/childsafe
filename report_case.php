@@ -176,12 +176,31 @@
         const messageInput = document.getElementById('messageInput');
 
         function sendMessage() {
-            const message = messageInput.value.trim();
-            if (message || mediaInput.files.length > 0) {
-                displayMessage('You', message, mediaInput.files[0]);
-                messageInput.value = '';
-                mediaInput.value = '';
-            }
+    const message = messageInput.value.trim();
+    const file = mediaInput.files[0];
+    
+    // Create FormData object to send message and file data
+    const formData = new FormData();
+    formData.append('message', message);
+    formData.append('file', file);
+
+    // Send AJAX request to server-side script
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'submit_report.php', true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            // If message sent successfully, display it in chat interface
+            displayMessage('You', message, file);
+            messageInput.value = '';
+            mediaInput.value = '';
+        } else {
+            // If an error occurred, display an error message
+            console.error('Error sending message:', xhr.responseText);
+        }
+    };
+    xhr.send(formData);
+}
+
         }
 
         function displayMessage(sender, message, file) {

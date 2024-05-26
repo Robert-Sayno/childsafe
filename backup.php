@@ -3,199 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup Form</title>
+    <title>ChildSafe Chat</title>
     <style>
         body {
-            background-color: #e0e0e0; /* Light gray background */
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
         }
 
-        header {
+        .header {
             background-color: #007bff;
             color: #fff;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
         }
 
-        header h1 {
+        .header h1 {
             margin: 0;
-            font-size: 24px;
         }
 
-        nav {
-            background-color: #007bff;
-            padding: 10px 0;
-            text-align: center;
+        .nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
         }
 
-        nav ul {
-            list-style-type: none;
-            padding: 0;
+        .nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0 10px;
         }
 
-        nav ul li {
-               
-            display: inline;
-            margin-right: 20px;
-        }
-
-        nav ul li:last-child {
-            margin-right: 0;
-            
-        }
-
-        .container {
+        .chat-container {
             max-width: 600px;
-            margin: 0 auto;
+            margin: 20px auto;
             background-color: #fff;
-            padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .form-page {
+        .chat-header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 15px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .chat-messages {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .message {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: #dcf8c6;
+            color: #000;
+        }
+
+        .message img,
+        .message video,
+        .message audio {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        .message.audio {
+            background-color: #ffc107;
+            color: #000;
+            display: flex;
+            align-items: center;
+        }
+
+        .message.audio audio {
+            margin-right: 10px;
+        }
+
+        .input-box {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            background-color: #f9f9f9;
+            border-top: 1px solid #ddd;
+        }
+
+        .input-box textarea {
+            flex: 1;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            outline: none;
+            resize: none;
+        }
+
+        .input-box input[type="file"] {
             display: none;
         }
 
-        .form-page.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
+        .input-box label {
             background-color: #007bff;
             color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
+            padding: 10px;
+            border-radius: 50%;
             cursor: pointer;
+            margin-right: 10px;
         }
 
-        button:hover {
-            background-color: #2980b9; /* Darker blue on hover */
+        .input-box label:hover {
+            background-color: #0056b3;
         }
 
-.form-page button[type="submit"] {
-    background-color: #1abc9c; /* Green for submit button */
-}
-nav ul li.active a {
-font: size 15px;
+        .input-box label:active {
+            background-color: #004080;
+        }
 
+        .input-box button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            outline: none;
+        }
 
-  color: #007bff; /* Set color for active link */
-}
+        .input-box button:hover {
+            background-color: #0056b3;
+        }
+
+        .input-box button:active {
+            background-color: #004080;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <h1>ChildSafe App</h1>
+    <header class="header">
+        <h1>ChildSafe Chat</h1>
+        <nav class="nav">
+            <a href="#">Home</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </nav>
     </header>
-    <nav>
-        <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
-        </ul>
-    </nav>
 
-    <div class="container">
-        <div class="form-page active" id="page1">
-            <h2>Signup Form - Step 1</h2>
-            <form id="formPage1">
-                <div class="form-group">
-                    <label for="phone">Phone Number:</label>
-                    <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required>
-                </div>
-                <button type="button" onclick="nextPage(1)">Next</button>
-            </form>
+    <div class="chat-container">
+        <div class="chat-header">Chat Room</div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Chat messages will be displayed here -->
         </div>
-        <div class="form-page" id="page2">
-            <form id="formPage2">
-                <div class="form-group">
-                    <label for="age">Age Range:</label>
-                    <select id="age" name="age" required>
-                        <option value="">Select Victim's Age Range</option>
-                        <option value="0-5">0-5 years</option>
-                        <option value="6-10">6-10 years</option>
-                        <option value="11-15">11-15 years</option>
-                        <option value="16-18">16-18 years</option>
-                        <option value="19+">19+ years</option>
-                    </select>
-                </div>
-                <button type="button" onclick="prevPage(2)">Previous</button>
-                <button type="button" onclick="nextPage(2)">Next</button>
-            </form>
-        </div>
-        <div class="form-page" id="page3">
-            <form id="formPage3">
-                <div class="form-group">
-                    <label for="district">District:</label>
-                    <select id="district" name="district" required>
-                        <option value="">Select District</option>
-                        <option value="District 1">kamuli</option>
-                        <option value="District 2">jinja</option>
-                        <option value="District 3">buyende</option>
-                        <option value="District 1">buguri</option>
-                        <option value="District 2">mbale</option>
-                        <option value="District 3">namutumba</option>
-                        
-                        <!-- Add more districts as needed -->
-                    </select>
-                </div>
-                <button type="button" onclick="prevPage(3)">Previous</button>
-                <button type="button" onclick="nextPage(3)">Next</button>
-            </form>
-        </div>
-        <div class="form-page" id="page4">
-            <form id="formPage4">
-                <div class="form-group">
-                    <label for="category">Reporter Category:</label>
-                    <select id="category" name="category" required>
-                        <option value="">Who is reporting</option>
-                        <option value="Parent">Parent</option>
-                        <option value="Parent">guadian</option>
-                        <option value="Teacher">Teacher</option>
-                        <option value="Community Member">Community Member</option>
-                        <!-- Add more categories as needed -->
-                    </select>
-                </div>
-                <button type="button" onclick="prevPage(4)">Previous</button>
-                <button type="submit">Submit</button>
-            </form>
+        <div class="input-box">
+            <textarea id="messageInput" placeholder="Type a message..."></textarea>
+            <input type="file" id="mediaInput" accept="image/*, video/*, audio/*" capture="environment">
+            <label for="mediaInput">+</label>
+            <button onclick="sendMessage()">Send</button>
         </div>
     </div>
 
     <script>
-        function nextPage(currentPage) {
-            var pages = document.querySelectorAll('.form-page');
-            pages[currentPage - 1].classList.remove('active');
-            pages[currentPage].classList.add('active');
+        const chatMessages = document.getElementById('chatMessages');
+        const mediaInput = document.getElementById('mediaInput');
+        const messageInput = document.getElementById('messageInput');
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (message || mediaInput.files.length > 0) {
+                displayMessage('You', message, mediaInput.files[0]);
+                messageInput.value = '';
+                mediaInput.value = '';
+            }
         }
 
-        function prevPage(currentPage) {
-            var pages = document.querySelectorAll('.form-page');
-            pages[currentPage - 1].classList.remove('active');
-            pages[currentPage - 2].classList.add('active');
+        function displayMessage(sender, message, file) {
+            const messageContainer = document.createElement('div');
+            messageContainer.className = 'message';
+            if (sender === 'You') {
+                messageContainer.classList.add('user-message');
+            }
+            if (message) {
+                messageContainer.textContent = message;
+            }
+            if (file) {
+                const mediaElement = document.createElement(getMediaType(file.type));
+                mediaElement.src = URL.createObjectURL(file);
+                messageContainer.appendChild(mediaElement);
+            }
+            chatMessages.appendChild(messageContainer);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function getMediaType(type) {
+            if (type.includes('image')) return 'img';
+            if (type.includes('video')) return 'video';
+            if (type.includes('audio')) return 'audio';
+            return 'div';
         }
     </script>
 </body>
