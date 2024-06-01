@@ -1,3 +1,4 @@
+
 <?php
 // Enable error reporting
 error_reporting(E_ALL);
@@ -5,6 +6,15 @@ ini_set('display_errors', 1);
 
 // Start the session at the beginning of the script
 session_start();
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) { // Change to check 'user' instead of 'id'
+    header('Location: login.php');
+    exit();
+}
+
+// Extract user details from session
+$user = $_SESSION['user_id'];
+$phone = $user['phone']; // Access phone number from user details
 
 ?>
 
@@ -139,7 +149,7 @@ session_start();
         <section class="hero">
             <h2>Welcome to ChildSafe</h2>
             <p>Report child abuse and protect children's rights</p>
-            <a href="report.html" class="btn">Report Abuse</a>
+            <a href="report_case.php" class="btn">Report Abuse</a>
         </section>
 
         <section class="features">
@@ -177,10 +187,9 @@ session_start();
     </main>
    <!-- User info section -->
    <div class="user-info">
-        <?php
+   <?php
         // Display welcome message and logout link if user is logged in
-        $phone = $_SESSION['phone'];
-        echo "Welcome, $phone!";
+        echo "Welcome, $phone!"; // Display phone number
         echo '<a href="logout.php">Logout</a>';
         ?>
     </div>

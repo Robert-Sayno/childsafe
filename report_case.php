@@ -1,3 +1,74 @@
+<?php
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Include your database connection file
+include_once('auth/connection.php');
+
+// Handle login and store user ID in session
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
+    $phone = $_POST['phone'];
+
+    if (!is_numeric($phone)) {
+        echo "<script>alert('Please enter a valid phone number.'); window.location.href = 'login.php';</script>";
+        exit();
+    }
+
+    $stmt = $conn->prepare("SELECT id FROM users WHERE phone = ?");
+    $stmt->bind_param("s", $phone);
+    $stmt->execute();
+    $stmt->bind_result($user_id);
+    $stmt->fetch();
+    $stmt->close();
+
+    if ($user_id) {
+        $_SESSION['user_id'] = $user_id;
+        header("Location: index.php");
+        exit();
+    } else {
+        echo "<script>alert('Phone number not found. Please try again.'); window.location.href = 'login.php';</script>";
+        exit();
+    }
+}
+
+// Handle report submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'])) {
+    $message = $_POST['message'];
+    $file = $_FILES['file'];
+    $user_id = $_SESSION['user_id'];
+
+    $upload_dir = 'uploads/';
+    $file_path = '';
+
+    if ($file && $file['error'] == 0) {
+        $file_name = basename($file['name']);
+        $target_file = $upload_dir . $file_name;
+
+        if (move_uploaded_file($file['tmp_name'], $target_file)) {
+            $file_path = $target_file;
+        } else {
+            echo json_encode(['error' => 'File upload failed']);
+            exit;
+        }
+    }
+
+    // Insert report into database with user_id
+    $stmt = $conn->prepare("INSERT INTO reports (user_id, message, file_path) VALUES (?, ?, ?)");
+    $stmt->bind_param("iss", $user_id, $message, $file_path);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['error' => 'Database insert failed']);
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -176,31 +247,31 @@
         const messageInput = document.getElementById('messageInput');
 
         function sendMessage() {
-    const message = messageInput.value.trim();
-    const file = mediaInput.files[0];
-    
-    // Create FormData object to send message and file data
-    const formData = new FormData();
-    formData.append('message', message);
-    formData.append('file', file);
+            const message = messageInput.value.trim();
+            const file = mediaInput.files[0];
 
-    // Send AJAX request to server-side script
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'submit_report.php', true);
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            // If message sent successfully, display it in chat interface
-            displayMessage('You', message, file);
-            messageInput.value = '';
-            mediaInput.value = '';
-        } else {
-            // If an error occurred, display an error message
-            console.error('Error sending message:', xhr.responseText);
-        }
-    };
-    xhr.send(formData);
-}
+            // Create FormData object to send message and file data
+            const formData = new FormData();
+            formData.append('message', message);
+            if (file) {
+                formData.append('file', file);
+            }
 
+            // Send AJAX request to server-side script
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '', true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // If message sent successfully, display it in chat interface
+                    displayMessage('You', message, file);
+                    messageInput.value = '';
+                    mediaInput.value = '';
+                } else {
+                    // If an error occurred, display an error message
+                    console.error('Error while sending message:', xhr.responseText);
+                }
+            };
+            xhr.send(formData);
         }
 
         function displayMessage(sender, message, file) {
@@ -215,7 +286,8 @@
             if (file) {
                 const mediaElement = document.createElement(getMediaType(file.type));
                 mediaElement.src = URL.createObjectURL(file);
-                messageContainer.appendChild(mediaElement);
+                mediaElement.controls = true;
+                messageContaine.appendChild(mediaElement);
             }
             chatMessages.appendChild(messageContainer);
             chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -230,3 +302,4 @@
     </script>
 </body>
 </html>
+

@@ -1,3 +1,46 @@
+<?php
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Database connection
+    include_once('auth/connection.php');
+
+    // Retrieve phone number from form
+    $phone = trim($_POST["phone"]);
+
+    // Check if the phone number contains only digits
+    if (!is_numeric($phone)) {
+        echo "<script>alert('Please enter a valid phone number.'); window.location.href = 'login.php';</script>";
+        exit();
+    }
+    // Prepare and bind SQL statement to prevent SQL injection
+    $stmt = $conn->prepare("SELECT id FROM users WHERE phone = ?");
+    $stmt->bind_param("s", $phone);
+    $stmt->execute();
+    $stmt->bind_result($user_id);
+    
+    // Fetch the first row
+    if ($stmt->fetch()) {
+        // Phone number exists, store user ID in session
+        $_SESSION['user_id'] = $user_id;
+        
+        // Close the statement
+        $stmt->close();
+
+        // Redirect to index.php after successful login
+        header("Location: index.php");
+        exit();
+    } else {
+        // Phone number doesn't exist, show error message
+        echo "<script>alert('Phone number not found. Please try again.'); window.location.href = 'login.php';</script>";
+        exit();
+    }
+    $stmt->close();
+    $conn->close();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -91,48 +134,10 @@
     </div>
 
     <div class="container">
-        <?php
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
-
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Database connection
-            include_once('auth/connection.php');
-            // Retrieve phone number from form
-            $phone = $_POST["phone"];
-
-            // Check if the phone number contains only digits
-            if (!is_numeric($phone)) {
-                echo "<script>alert('Please enter a valid phone number.'); window.location.href = 'login.php';</script>";
-                exit();
-            }
-
-            // SQL query to check if the phone number exists in the database
-            $sql = "SELECT * FROM users WHERE phone = '$phone'";
-            $result = $conn->query($sql);
-
-            if ($result->num_rows > 0) {
-                // Phone number exists, grant access to index page
-                $_SESSION['phone'] = $phone; // Set session variable
-                header("Location: index.php");
-                exit();
-            } else {
-                // Phone number doesn't exist, show error message
-                echo "<script>alert('Phone number not found. Please try again.'); window.location.href = 'login.php';</script>";
-                exit();
-            }
-            
-            echo "<script>alert('Login successful. Redirecting to index page.'); setTimeout(function() { window.location.href = 'index.php'; }, 1000);</script>";
-
-            $conn->close();
-        }
-        ?>
-
         <form id="loginForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
             <div class="form-group">
                 <label for="phone">Phone Number:</label>
                 <input type="text" id="phone" name="phone" placeholder="Enter your phone number starting with 07.." required>
-                <!-- Hint text -->
             </div>
             <button type="submit">Login</button>
         </form>
@@ -140,8 +145,8 @@
 
     <script>
         // JavaScript for displaying success alert after successful login
-        <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $result->num_rows > 0): ?>
-        alert("Login successful. Redirecting to index page.");
+        <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['phone'])): ?>
+        alert("Login successful. Redirecting to redirecing you soon.");
         <?php endif; ?>
     </script>
 </body>

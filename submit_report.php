@@ -1,9 +1,9 @@
 <?php
 // Establish a database connection (replace these values with your actual database credentials)
 $servername = "localhost";
-$username = "your_username";
-$password = "your_password";
-$dbname = "your_database";
+$username = "root";
+$password = "";
+$dbname = "childsafe";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -12,7 +12,6 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
 // Check if the request method is POST
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Get the message and file data from the request
@@ -28,17 +27,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $file_path = $target_file;
         }
     }
-
     // Insert the message data into the database
-    $sql = "INSERT INTO chat_messages (message, file_path) VALUES (?, ?)";
+    $sql = "INSERT INTO reports (message, file_path) VALUES (?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ss", $message, $file_path);
     if ($stmt->execute()) {
         // Message inserted successfully
-        echo "Message submitted successfully";
+        echo "Your message has been sent";
     } else {
         // Error inserting message
-        echo "Error submitting message";
+        echo "Error sending message message";
     }
 }
 
