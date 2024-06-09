@@ -1,74 +1,3 @@
-<?php
-session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Include your database connection file
-include_once('auth/connection.php');
-
-// Handle login and store user ID in session
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
-    $phone = $_POST['phone'];
-
-    if (!is_numeric($phone)) {
-        echo "<script>alert('Please enter a valid phone number.'); window.location.href = 'login.php';</script>";
-        exit();
-    }
-
-    $stmt = $conn->prepare("SELECT id FROM users WHERE phone = ?");
-    $stmt->bind_param("s", $phone);
-    $stmt->execute();
-    $stmt->bind_result($user_id);
-    $stmt->fetch();
-    $stmt->close();
-
-    if ($user_id) {
-        $_SESSION['user_id'] = $user_id;
-        header("Location: index.php");
-        exit();
-    } else {
-        echo "<script>alert('Phone number not found. Please try again.'); window.location.href = 'login.php';</script>";
-        exit();
-    }
-}
-
-// Handle report submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'])) {
-    $message = $_POST['message'];
-    $file = $_FILES['file'];
-    $user_id = $_SESSION['user_id'];
-
-    $upload_dir = 'uploads/';
-    $file_path = '';
-
-    if ($file && $file['error'] == 0) {
-        $file_name = basename($file['name']);
-        $target_file = $upload_dir . $file_name;
-
-        if (move_uploaded_file($file['tmp_name'], $target_file)) {
-            $file_path = $target_file;
-        } else {
-            echo json_encode(['error' => 'File upload failed']);
-            exit;
-        }
-    }
-
-    // Insert report into database with user_id
-    $stmt = $conn->prepare("INSERT INTO reports (user_id, message, file_path) VALUES (?, ?, ?)");
-    $stmt->bind_param("iss", $user_id, $message, $file_path);
-
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['error' => 'Database insert failed']);
-    }
-
-    $stmt->close();
-    $conn->close();
-}
-?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -216,22 +145,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'])) {
         .input-box button:active {
             background-color: #004080;
         }
+
+        /* New styles for image container */
+        .image-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <header class="header">
         <h1>ChildSafe Chat</h1>
         <nav class="nav">
-            <a href="#">Home</a>
-            <a href="#">About</a>
-            <a href="#">Contact</a>
+            <a href="index.php">Home</a>
+            <a href="follow_up.php">FOllow up case</a>
+            <a href="#">call</a>
         </nav>
     </header>
+    
+    <div class="image-container">
+    <img src="images/childsafe.jpeg" alt="Image">
+</div>
+
 
     <div class="chat-container">
         <div class="chat-header">Chat Room</div>
         <div class="chat-messages" id="chatMessages">
             <!-- Chat messages will be displayed here -->
+        </div>
+        <div class="image-container">
+            <!-- Placeholder for image display -->
         </div>
         <div class="input-box">
             <textarea id="messageInput" placeholder="Type a message..."></textarea>
@@ -287,7 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'])) {
                 const mediaElement = document.createElement(getMediaType(file.type));
                 mediaElement.src = URL.createObjectURL(file);
                 mediaElement.controls = true;
-                messageContaine.appendChild(mediaElement);
+                messageContainer.appendChild(mediaElement);
             }
             chatMessages.appendChild(messageContainer);
             chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -302,4 +253,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'])) {
     </script>
 </body>
 </html>
-
+``

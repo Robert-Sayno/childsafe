@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login</title>
+    <title>Chils Safe- Admin Login</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background: url('images/childsafe1.jpeg') no-repeat center center fixed;
+            background-size: cover;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -15,18 +16,24 @@
             margin: 0;
         }
         .login-box {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 40px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            width: 300px;
+            width: 350px;
+            text-align: center;
         }
         .login-box h2 {
             margin-bottom: 20px;
             color: #333;
         }
+        .login-box img {
+            width: 80px;
+            margin-bottom: 20px;
+        }
         .input-group {
             margin-bottom: 20px;
+            text-align: left;
         }
         .input-group label {
             display: block;
@@ -38,19 +45,21 @@
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            box-sizing: border-box;
         }
         button {
             width: 100%;
             padding: 10px;
-            background-color: #333;
+            background-color: #3498db;
             color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
+            transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #555;
+            background-color: #2980b9;
         }
         .error {
             color: red;
@@ -60,10 +69,15 @@
 </head>
 <body>
     <div class="login-box">
-        <h2>Login</h2>
+        <img src="images/childsafe.jpeg" alt="Logo">
+        <h2>Child Sade-Admin Login</h2>
         <?php
-        if (isset($_GET['error'])) {
-            echo '<div class="error">' . htmlspecialchars($_GET['error']) . '</div>';
+        session_start();
+        if (isset($_SESSION['login_errors'])) {
+            foreach ($_SESSION['login_errors'] as $error) {
+                echo '<div class="error">' . htmlspecialchars($error) . '</div>';
+            }
+            unset($_SESSION['login_errors']);
         }
         ?>
         <form action="process_login.php" method="POST">

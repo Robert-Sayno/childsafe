@@ -6,8 +6,16 @@ ini_set('display_errors', 1);
 // Include your database connection file
 include_once('connection.php');
 
-// Fetch all reports from the database along with user phone numbers and report IDs
-$stmt = $conn->prepare("SELECT r.id, r.user_id, u.phone FROM reports r INNER JOIN users u ON r.user_id = u.id");
+// Fetch all unique user reports from the database along with user phone numbers and report IDs
+$sql = "SELECT r.id, r.user_id, u.phone, r.message, r.admin_reply 
+        FROM reports r 
+        INNER JOIN users u ON r.user_id = u.id
+        GROUP BY r.user_id";
+$stmt = $conn->prepare($sql);
+if (!$stmt) {
+    echo "Error preparing statement: " . $conn->error;
+    exit;
+}
 $stmt->execute();
 $reports = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
@@ -19,11 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply'])) {
 
     // Update the report with the admin's reply
     $stmt = $conn->prepare("UPDATE reports SET admin_reply = ? WHERE id = ?");
+    if (!$stmt) {
+        echo "Error preparing statement: " . $conn->error;
+        exit;
+    }
     $stmt->bind_param("si", $reply, $report_id);
 
     if ($stmt->execute()) {
         // Redirect to prevent form resubmission on page refresh
-        header('Location: admin.php');
+        header('Location: view_reports.php');
         exit();
     } else {
         echo "<script>alert('Failed to update report.');</script>";
@@ -53,6 +65,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply'])) {
             padding: 15px;
             text-align: center;
             margin-bottom: 20px;
+            position: relative;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            background-color: #555;
+            transition: background-color 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: #777;
         }
 
         .container {
@@ -62,6 +95,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply'])) {
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         table {
@@ -81,16 +119,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply'])) {
             color: #333;
         }
 
-        button {
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        button, .actions a {
             padding: 8px 15px;
             background-color: #007bff;
             color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
         }
 
-        button:hover {
+        button:hover, .actions a:hover {
             background-color: #0056b3;
         }
 
@@ -105,11 +149,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply'])) {
     </style>
 </head>
 <body>
-    <!-- Admin header/navigation -->
-    <header>
+     <!-- Admin header/navigation -->
+     <header>
         <h1>Admin Dashboard</h1>
+        <nav>
+            <a href="view_reports.pp">View Reports</a>
+            <a href="#">Create Report</a>
+            <a href="view_users.php">Manage Users</a>
+            <a href="#">Settings</a>
+        </nav>
     </header>
-
+  
     <!-- Admin dashboard content -->
     <div class="container">
         <h2>Reports</h2>
@@ -121,28 +171,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply'])) {
                 <th>Actions</th>
             </tr>
             <?php foreach ($reports as $report): ?>
-            <tr>
-                <td><?php echo $report['id']; ?></td>
-                <td><?php echo $report['user_id']; ?></td>
-                <td><?php echo $report['phone']; ?></td>
-                <td>
-                    <!-- View message form -->
-                    <form action="view_message.php" method="post">
-                        <input type="hidden" name="report_id" value="<?php echo $report['user_id']; ?>">
-                        <button type="submit" name="view_message">
-                            Open Message 
-                            <?php if (empty($report['message'])): ?>
-                           <!-- <span class="notification">New</span> - - >
-                            <?php endif; ?>
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            <?php endforeach; ?>
+<tr>
+    <td><?php echo $report['id']; ?></td>
+    <td><?php echo $report['user_id']; ?></td>
+    <td><?php echo $report['phone']; ?></td>
+    <td>
+        <a href="view_message.php?user_id=<?php echo $report['user_id']; ?>">Open Message</a>
+    </td>
+</tr>
+<?php endforeach; ?>
+
         </table>
     </div>
-    
- 
-
 </body>
 </html>

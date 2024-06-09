@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Employees</title>
+    <title>Admin Dashboard - users</title>
     <style>
         body {
             background-image: url('lost_property_bg.jpg');
@@ -141,12 +141,12 @@
 
     <div class="dashboard-container">
         <div class="dashboard-header">
-            <h2>Welcome to the Admin Dashboard - SYSTEM  USERS</h2>
+            <h2>Welcome - VIEW ALL SYSTEM  USERS</h2>
         </div>
 
         <!-- Navigation Links -->
         <div class="nav-container">
-            <a class="nav-link" href="dashboard.php">Home Dashboard</a>
+            <a class="nav-link" href="index.php">Home Dashboard</a>
             <!-- Add more navigation links as needed -->
         </div>
 
@@ -157,7 +157,7 @@
 
         <!-- Display employees in a table -->
         <div class="dashboard-section">
-            <h3>All Employees</h3>
+            <h3>All Users</h3>
             <table id="employeeTable">
                 <thead>
                     <tr>

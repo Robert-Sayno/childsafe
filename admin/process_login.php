@@ -1,42 +1,57 @@
 <?php
 session_start();
-$servername = "localhost";
-$username = "root";  // Change this to your database username
-$password = "";      // Change this to your database password
-$dbname = "childsafe"; // Change this to your database name
+include_once('connection.php');
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $errors = [];
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $user = $_POST['username'];
-    $pass = $_POST['password'];
-
-    // Basic sanitization
-    $user = stripslashes($user);
-    $pass = stripslashes($pass);
-    $user = mysqli_real_escape_string($conn, $user);
-    $pass = mysqli_real_escape_string($conn, $pass);
-
-    $sql = "SELECT * FROM admins WHERE username='$user' AND password='$pass'";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        // Correct credentials
-        $_SESSION['loggedin'] = true;
-        $_SESSION['username'] = $user;
-        header("Location: index.php");
+    // Validate username
+    if (empty($_POST['username'])) {
+        $errors[] = "Username is required.";
     } else {
-        // Invalid credentials
-        $error = "Invalid username or password";
-        header("Location: login.php?error=" . urlencode($error));
+        $username = $_POST['username'];
+        if (!preg_match("/^[a-zA-Z0-9]*$/", $username)) {
+            $errors[] = "Invalid username format.";
+        }
     }
-}
 
-$conn->close();
+    // Validate password
+    if (empty($_POST['password'])) {
+        $errors[] = "Password is required.";
+    } else {
+        $password = $_POST['password'];
+    }
+
+    if (empty($errors)) {
+        // Prepare and bind the statement
+        $stmt = $conn->prepare("SELECT id, username FROM admins WHERE username = ? AND password = ?");
+        if (!$stmt) {
+            $errors[] = "Database error: " . $conn->error;
+        } else {
+            $stmt->bind_param("ss", $username, $password);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                $admin = $result->fetch_assoc();
+                $_SESSION['id'] = $admin['id'];
+                $_SESSION['username'] = $admin['username'];
+                header('Location: index.php');
+                exit();
+            } else {
+                $errors[] = "Invalid username or password.";
+            }
+            $stmt->close();
+        }
+    }
+
+    if (!empty($errors)) {
+        $_SESSION['login_errors'] = $errors;
+        header('Location: login.php');
+        exit();
+    }
+} else {
+    header('Location: login.php');
+    exit();
+}
 ?>

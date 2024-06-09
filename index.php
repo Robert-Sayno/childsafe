@@ -1,8 +1,8 @@
 
 <?php
 // Enable error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1);
 
 // Start the session at the beginning of the script
 session_start();
@@ -155,7 +155,7 @@ $phone = $user['phone']; // Access phone number from user details
         <section class="features">
             <div class="feature">
                 <a href="seek_guidance.html">
-                    <img src="images/me.jpeg" alt="Feature 1">
+                    <img src="images/childsafe.jpeg" alt="Feature 1">
                     <div class="overlay">
                         <h3>24/7 Reporting</h3>
                         <p>Report child abuse anytime, anywhere.</p>
@@ -165,7 +165,7 @@ $phone = $user['phone']; // Access phone number from user details
             </div>
             <div class="feature">
                 <a href="report_case.html">
-                    <img src="images/me.jpeg" alt="Feature 2">
+                    <img src="images/childsafe1.jpeg" alt="Feature 2">
                     <div class="overlay">
                         <h3>Anonymous Reporting</h3>
                         <p>Ensure confidentiality with our anonymous reporting system.</p>
@@ -175,7 +175,7 @@ $phone = $user['phone']; // Access phone number from user details
             </div>
             <div class="feature">
                 <a href="follow_up.html">
-                    <img src="images/me.jpeg" alt="Feature 3">
+                    <img src="images/childsafe2.jpeg" alt="Feature 3">
                     <div class="overlay">
                         <h3>Track Progress</h3>
                         <p>Stay informed about the progress of reported cases.</p>

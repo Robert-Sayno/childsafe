@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     } else {
         // Phone number doesn't exist, show error message
-        echo "<script>alert('Phone number not found. Please try again.'); window.location.href = 'login.php';</script>";
+        echo "<script>alert('A user with that number is  not found. Please try again.'); window.location.href = 'login.php';</script>";
         exit();
     }
     $stmt->close();
@@ -56,13 +56,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             padding: 20px;
         }
 
+        .header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .nav {
+            background-color: #007bff;
+            padding: 10px;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .nav a:hover {
+            text-decoration: underline;
+        }
+
         .container {
             max-width: 800px;
-            margin: 0 auto;
+            margin: 20px auto;
             background-color: #fff;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .form-group {
@@ -96,28 +124,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background-color: #0056b3;
         }
 
-        .header {
-            background-color: #333;
-            color: #fff;
+        .image-container {
+            flex: 1;
+            text-align: center;
             padding: 20px;
-            text-align: center;
-            border-radius: 10px 10px 0 0;
         }
 
-        .nav {
-            background-color: #007bff;
-            padding: 10px;
-            text-align: center;
-            border-radius: 0 0 10px 10px;
+        .image-container img {
+            max-width: 100%;
+            border-radius: 10px;
         }
 
-        .nav a {
-            color: #fff;
+        .form-container {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .signup-link {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .signup-link a {
+            color: #007bff;
             text-decoration: none;
-            margin: 0 10px;
         }
 
-        .nav a:hover {
+        .signup-link a:hover {
             text-decoration: underline;
         }
     </style>
@@ -128,25 +161,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <h1>Login Form</h1>
     </div>
     <div class="nav">
-        <a href="#">Home</a>
+        <a href="index.php">Home</a>
         <a href="#">About</a>
         <a href="#">Contact</a>
     </div>
 
     <div class="container">
-        <form id="loginForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-            <div class="form-group">
-                <label for="phone">Phone Number:</label>
-                <input type="text" id="phone" name="phone" placeholder="Enter your phone number starting with 07.." required>
+        <div class="image-container">
+            <img src="images/childsafe.jpeg" alt="Image">
+        </div>
+        <div class="form-container">
+            <form id="loginForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                <div class="form-group">
+                    <label for="phone">Phone Number:</label>
+                    <input type="text" id="phone" name="phone" placeholder="Enter phone number e.g 07.." required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <div class="signup-link">
+                <p>Don't have an account? <a href="signup.php">Sign up</a></p>
             </div>
-            <button type="submit">Login</button>
-        </form>
+        </div>
     </div>
 
     <script>
         // JavaScript for displaying success alert after successful login
         <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['phone'])): ?>
-        alert("Login successful. Redirecting to redirecing you soon.");
+        alert("Login successful. Redirecting to the dashboard.");
         <?php endif; ?>
     </script>
 </body>

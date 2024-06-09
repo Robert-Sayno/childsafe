@@ -46,6 +46,9 @@
 
         .resource {
             margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .resource h2 {
@@ -62,15 +65,29 @@
             border: none;
             margin-top: 10px;
         }
+
+        .btn {
+            background-color: #007bff;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <header class="header">
         <h1>Guidance and Counseling Resources</h1>
         <nav class="nav">
-            <a href="#">Home</a>
-            <a href="#">About</a>
-            <a href="#">Contact</a>
+            <a href="index.php">Home</a>
+            <a href="report_case.php">Report a case</a>
+            <a href="follow_up.php">Follow up reported case</a>
         </nav>
     </header>
 
@@ -78,19 +95,20 @@
         <div class="resource">
             <h2>Guidance and Counseling Video</h2>
             <p>This video provides guidance on how to recognize signs of child abuse and provide support.</p>
-            <iframe src="https://www.youtube.com/embed/VIDEO_ID" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/oGlDN9ZA5nM" allowfullscreen></iframe>
+
         </div>
 
         <div class="resource">
             <h2>Journal Article: Recognizing Signs of Child Abuse</h2>
             <p>This journal article discusses common signs of child abuse and strategies for intervention.</p>
-            <p><a href="#">Read Article</a></p>
+            <p><a href="#" class="btn">Read Article</a></p>
         </div>
 
         <div class="resource">
             <h2>Twitter Thread: Child Safety Tips</h2>
             <p>This Twitter thread offers practical tips for ensuring child safety in different environments.</p>
-            <p><a href="#">View Thread</a></p>
+            <p><a href="#" class="btn">View Thread</a></p>
         </div>
     </div>
 </body>
